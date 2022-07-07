@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">EventPlanner</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="visited_event">Посещённый</string>
+    <string name="missed_event">Пропущенный</string>
+    <string name="the_weather_at_that_time">Погода в то время:</string>
+    <string name="add_event">Add Event</string>
+    <string name="lbl_event_name">Event Name</string>
+    <string name="lbl_description">Description</string>
+    <string name="lbl_location">Location</string>
+    <string name="lbl_date">01/07/2022</string>
+    <string name="tv_time">11/54/00</string>
+    <string name="lbl_time">Time</string>
+    <string name="lbl_add_event">Add Event</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="event_name">Event Name:</string>
+    <string name="direction">Direction:</string>
+    <string name="location">Location:</string>
+    <string name="dates">Date:</string>
+    <string name="time_display">Time:</string>
+    <string name="weather">Weather at that time:</string>
+    <string name="settings">Settings</string>
+    <string name="delete">Delete</string>
+    <string name="change">Change</string>
+    <string name="get_weather">Get Weather</string>
+    <string name="wind">Wind:</string>
+    <string name="temperature">Temperature:</string>
+    <string name="visibility">Visibility:</string>
+    <string name="update">Update</string>
+    <string name="update_event">Update Event</string>
+    <string name="delete_event">Delete Event</string>
+</resources>
