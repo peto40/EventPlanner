@@ -4,14 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.eventplanner.R
 import com.eventplanner.model.models.EventModel
 import com.squareup.picasso.Picasso
-import okhttp3.internal.notifyAll
 
 
 class EventRecyclerAdapter(private val context: Context?) :
@@ -24,13 +21,9 @@ class EventRecyclerAdapter(private val context: Context?) :
         notifyDataSetChanged()
     }
 
-//    fun updateEvents() {
-//        notifyDataSetChanged()
-//    }
-
     interface OnClickListener {
         fun onItemClick(position: Int, items: MutableList<EventModel>)
-        fun onSettingsClick(position: Int, items: MutableList<EventModel>){}
+        fun onSettingsClick(position: Int, items: MutableList<EventModel>)
     }
 
     fun setOnClickListener(listener: OnClickListener) {
@@ -55,7 +48,6 @@ class EventRecyclerAdapter(private val context: Context?) :
         Picasso.get()
             .load(itemModel.icon)
             .into(holder.icon)
-
     }
 
     override fun getItemCount() = items.size
@@ -69,6 +61,7 @@ class EventRecyclerAdapter(private val context: Context?) :
         val descriptionTxt: TextView = view.findViewById(R.id.description_txt)
         val locationTxt: TextView = view.findViewById(R.id.location_txt)
         val icon: ImageView = view.findViewById(R.id.weather_icon)
+
         private val updateBtn: ImageButton = view.findViewById(R.id.setting_btn)
 
         init {
@@ -78,6 +71,7 @@ class EventRecyclerAdapter(private val context: Context?) :
             updateBtn.setOnClickListener {
                 clickListener.onSettingsClick(adapterPosition, items)
             }
+
         }
     }
 }

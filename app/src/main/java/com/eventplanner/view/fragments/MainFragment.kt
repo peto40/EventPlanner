@@ -1,23 +1,18 @@
 package com.eventplanner.view.fragments
 
-import android.app.AlertDialog
-import android.app.DirectAction
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.ListFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.eventplanner.R
 import com.eventplanner.databinding.FragmentMainBinding
 import com.eventplanner.model.models.EventModel
+import com.eventplanner.utils.ViewModelProviderFactory
 import com.eventplanner.view.adapters.EventRecyclerAdapter
 import com.eventplanner.viewmodel.SharedViewModel
+import javax.inject.Inject
 
 
 class MainFragment : Fragment() {
@@ -26,13 +21,22 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
     }
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: EventRecyclerAdapter
-    private lateinit var sharedViewModel: SharedViewModel
 
+//        private val mSharedViewModel: SharedViewModel by viewModels {
+//        ShareViewModelFactory(
+//            requireActivity().application,
+//            (requireActivity().application as MyApplication).repository)
+//    }
+    private lateinit var mSharedViewModel: SharedViewModel
+
+    @Inject
+    lateinit var providerFactory: ViewModelProviderFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +45,8 @@ class MainFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         adapter = EventRecyclerAdapter(context)
 
-        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+       // mSharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+
 
 
         binding.recyclerView.layoutManager =
@@ -49,20 +54,31 @@ class MainFragment : Fragment() {
         binding.recyclerView.adapter = adapter
         adapter.setOnClickListener(object : EventRecyclerAdapter.OnClickListener {
             override fun onItemClick(position: Int, items: MutableList<EventModel>) {
-                val action = MainFragmentDirections.actionMainFragmentToDisplayFragment(items[position])
-                findNavController().navigate(action)
+                findNavController().navigate(
+                    MainFragmentDirections.actionMainFragmentToDisplayFragment(
+                        items[position]
+                    )
+                )
             }
 
             override fun onSettingsClick(position: Int, items: MutableList<EventModel>) {
-                val action = MainFragmentDirections.actionMainFragmentToUpdateFragment(items[position])
-                findNavController().navigate(action)            }
+                findNavController().navigate(
+                    MainFragmentDirections.actionMainFragmentToUpdateFragment(
+                        items[position]
+                    )
+                )
+            }
+
         })
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedViewModel.allEventLiveData.observe(viewLifecycleOwner) { item ->
+        setupViewModel()
+
+
+        mSharedViewModel.allEventLiveData.observe(viewLifecycleOwner) { item ->
             adapter.setItems(item)
         }
     }
@@ -80,5 +96,9 @@ class MainFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setupViewModel() {
+        mSharedViewModel = ViewModelProvider(this, providerFactory)[SharedViewModel::class.java]
     }
 }

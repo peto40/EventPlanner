@@ -4,5 +4,5 @@ object Constants {
 
     const val BASE_URL = "https://api.openweathermap.org/"
 
-    const val API_KEY = "dc0a182113de81862351d2beea529038"
+    const val API_KEY = "2e17da4388b74b5859e5c70b967139ee"
 }

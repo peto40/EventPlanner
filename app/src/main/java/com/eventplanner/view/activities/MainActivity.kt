@@ -1,7 +1,7 @@
 package com.eventplanner.view.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.eventplanner.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

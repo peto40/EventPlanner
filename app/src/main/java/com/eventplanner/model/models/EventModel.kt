@@ -16,9 +16,13 @@ data class EventModel(
     val eventName: String,
     val description: String?,
     val location: String,
-    val icon: String
+    val icon: String,
+    val state: Boolean? = null
 ) : Parcelable {
+
     @IgnoredOnParcel
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null
 }
+
+

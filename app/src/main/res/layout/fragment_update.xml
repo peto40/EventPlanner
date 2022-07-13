@@ -202,7 +202,7 @@
                     android:textStyle="italic"/>
 
                 <ImageView
-                    android:id="@+id/iv_icon"
+                    android:id="@+id/iv_updated_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_weather_sunny"

@@ -15,9 +15,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.eventplanner.databinding.FragmentAddEventBinding
 import com.eventplanner.model.models.EventModel
+import com.eventplanner.utils.ViewModelProviderFactory
 import com.eventplanner.view.adapters.EventRecyclerAdapter
 import com.eventplanner.viewmodel.SharedViewModel
 import com.squareup.picasso.Picasso
+import javax.inject.Inject
 
 
 class AddEventFragment : Fragment(),
@@ -34,7 +36,7 @@ class AddEventFragment : Fragment(),
     var savedminute = 0
     var savedhour = 0
     val calendar: Calendar = Calendar.getInstance()
-    private fun setClickListeners() {
+    private fun setDateAndTimeListeners() {
         with(binding) {
             dateBtn.setOnClickListener {
                 day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -65,24 +67,28 @@ class AddEventFragment : Fragment(),
     private var _binding: FragmentAddEventBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: EventRecyclerAdapter
-    private lateinit var sharedViewModel: SharedViewModel
-
 
     private var iconName: String = ""
+
+    private lateinit var mSharedViewModel: SharedViewModel
+
+    @Inject
+    lateinit var providerFactory: ViewModelProviderFactory
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setDateAndTimeListeners()
         _binding = FragmentAddEventBinding.inflate(layoutInflater, container, false)
         adapter = EventRecyclerAdapter(context)
-        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        //mSharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
-        setClickListeners()
+
 
         fun getWeather(location: String) {
-            sharedViewModel.getWeatherData(location)
+            mSharedViewModel.getWeatherData(location)
         }
 
         fun setIcon(iconName: String) = "https://openweathermap.org/img/wn/$iconName@2x.png"
@@ -107,9 +113,9 @@ class AddEventFragment : Fragment(),
                 icon
             )
             if (!inputCheck(eventName, description, location, date, time, weather)) {
-                sharedViewModel.addItemListToDB(simpleItem)
+                mSharedViewModel.addItemListToDB(simpleItem)
                 findNavController().popBackStack()
-                Toast.makeText(requireContext(), "Updated Successfully!", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Adding Successfully!", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(requireContext(), "Please fill out all fields!", Toast.LENGTH_LONG)
                     .show()
@@ -133,11 +139,13 @@ class AddEventFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupViewModel()
+
         observers()
     }
 
     private fun observers() {
-        sharedViewModel.weatherLiveData.observe(viewLifecycleOwner) { data ->
+        mSharedViewModel.weatherLiveData.observe(viewLifecycleOwner) { data ->
             data?.let {
                 val temperature = (data.main.temp - 273.15).toFloat().toString()
                 binding.weatherTemperature.text = "$temperature ºC"
@@ -168,5 +176,9 @@ class AddEventFragment : Fragment(),
                 || (date == "")
                 || (time == "")
                 || (weatherDescription == ""))
+    }
+
+    private fun setupViewModel() {
+        mSharedViewModel = ViewModelProvider(this, providerFactory)[SharedViewModel::class.java]
     }
 }

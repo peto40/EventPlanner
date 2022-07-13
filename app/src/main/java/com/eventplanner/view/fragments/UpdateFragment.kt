@@ -16,9 +16,10 @@ import androidx.navigation.fragment.navArgs
 import com.eventplanner.R
 import com.eventplanner.databinding.FragmentUpdateBinding
 import com.eventplanner.model.models.EventModel
-import com.eventplanner.view.adapters.EventRecyclerAdapter
+import com.eventplanner.utils.ViewModelProviderFactory
 import com.eventplanner.viewmodel.SharedViewModel
 import com.squareup.picasso.Picasso
+import javax.inject.Inject
 
 class UpdateFragment : Fragment(),
     DatePickerDialog.OnDateSetListener,
@@ -70,17 +71,21 @@ class UpdateFragment : Fragment(),
 
     private val args by navArgs<UpdateFragmentArgs>()
 
-    private lateinit var sharedViewModel: SharedViewModel
-    private lateinit var eventRecyclerAdapter: EventRecyclerAdapter
     private var _binding: FragmentUpdateBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var mSharedViewModel: SharedViewModel
+
+    @Inject
+    lateinit var providerFactory: ViewModelProviderFactory
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentUpdateBinding.inflate(inflater, container, false)
-        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
-        eventRecyclerAdapter = EventRecyclerAdapter(requireContext())
+        //mSharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         setDateAndTimeListeners()
 
         binding.etUpdatedEventName.setText(args.currentEvent.eventName)
@@ -92,80 +97,62 @@ class UpdateFragment : Fragment(),
 
         Picasso.get()
             .load(args.currentEvent.icon)
-            .into(binding.ivIcon)
+            .into(binding.ivUpdatedIcon)
 
         binding.btnUpdate.setOnClickListener {
-            updateCurrentEvent()
+
+            val eventName = binding.etUpdatedEventName.text.toString()
+            val eventDescription = binding.etUpdatedDescription.text.toString()
+            val location = binding.etUpdatedLocation.text.toString()
+            val date = binding.tvUpdatedDate.text.toString()
+            val time = binding.tvUpdatedTime.text.toString()
+            val weatherDescription = binding.updatedWeatherDescription.text.toString()
+            val weatherIcon = args.currentEvent.icon
+
+            val updatedEvent = EventModel(
+                date,
+                time,
+                weatherDescription,
+                eventName,
+                eventDescription,
+                location,
+                weatherIcon
+            )
+            updatedEvent.id = args.currentEvent.id
+            mSharedViewModel.updateEvent(updatedEvent)
+            findNavController().popBackStack()
         }
+
         binding.getWeatherBtn.setOnClickListener {
             val location = binding.etUpdatedLocation.text.toString()
-            sharedViewModel.getWeatherData(location)
+            mSharedViewModel.getWeatherData(location)
         }
 
         return binding.root
     }
 
-    private fun updateCurrentEvent() {
-        val eventName = binding.etUpdatedEventName.text.toString()
-        val eventDescription = binding.etUpdatedDescription.text.toString()
-        val location = binding.etUpdatedLocation.text.toString()
-        val date = binding.tvUpdatedDate.text.toString()
-        val time = binding.tvUpdatedTime.text.toString()
-        val weatherDescription = binding.updatedWeatherDescription.text.toString()
-        val weatherIcon = args.currentEvent.icon
-
-        val updatedEvent = EventModel(
-            date,
-            time,
-            weatherDescription,
-            eventName,
-            eventDescription,
-            location,
-            weatherIcon
-        )
-
-        sharedViewModel.updateEvent(updatedEvent)
-
-        if (inputCheck(
-                eventName,
-                eventDescription,
-                location,
-                date,
-                time,
-                weatherDescription
-            )
-        ) {
-            sharedViewModel.updateEvent(updatedEvent)
-            Toast.makeText(requireContext(), "Updated Successfully!", Toast.LENGTH_LONG).show()
-            findNavController().navigate(R.id.action_updateFragment_to_mainFragment)
-        } else {
-            Toast.makeText(requireContext(), "Please fill out all fields!", Toast.LENGTH_LONG).show()
-        }
-
-
-    }
-
-    private fun inputCheck(
-        eventName: String,
-        eventDescription: String,
-        location: String,
-        date: String,
-        time: String,
-        weatherDescription: String,
-    ): Boolean {
-        return ((eventName == "")
-                || (eventDescription == "")
-                || (location == "")
-                || (date == "")
-                || (time == "")
-                || (weatherDescription == ""))
-    }
+//    private fun inputCheck(
+//        eventName: String,
+//        eventDescription: String,
+//        location: String,
+//        date: String,
+//        time: String,
+//        weatherDescription: String,
+//    ): Boolean {
+//        return ((eventName == "")
+//                || (eventDescription == "")
+//                || (location == "")
+//                || (date == "")
+//                || (time == "")
+//                || (weatherDescription == ""))
+//    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupViewModel()
 
-        sharedViewModel.weatherLiveData.observe(viewLifecycleOwner) { data ->
+        mSharedViewModel.weatherLiveData.observe(viewLifecycleOwner) { data ->
             data?.let {
                 val temperature = (data.main.temp - 273.15).toFloat().toString()
                 binding.weatherTemperature.text = "$temperature ºC"
@@ -175,7 +162,7 @@ class UpdateFragment : Fragment(),
 
                 Picasso.get()
                     .load("https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png")
-                    .into(binding.ivIcon)
+                    .into(binding.ivUpdatedIcon)
             }
         }
     }
@@ -196,7 +183,7 @@ class UpdateFragment : Fragment(),
     private fun deleteEvent() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setPositiveButton("Yes") { _, _ ->
-            sharedViewModel.deleteEventFromDB(args.currentEvent)
+            mSharedViewModel.deleteEventFromDB(args.currentEvent)
             Toast.makeText(
                 requireContext(),
                 "Successfully removed" + " ${args.currentEvent.eventName}",
@@ -209,6 +196,10 @@ class UpdateFragment : Fragment(),
         builder.setTitle("Delete  ${args.currentEvent.eventName}?")
         builder.setMessage("Are you sure you want to delete ${args.currentEvent.eventName}?")
         builder.create().show()
+    }
+
+    private fun setupViewModel() {
+        mSharedViewModel = ViewModelProvider(this, providerFactory)[SharedViewModel::class.java]
     }
 }
 

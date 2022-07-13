@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.eventplanner.databinding.FragmentDisplayEventBinding
 import com.squareup.picasso.Picasso
+import dagger.android.support.DaggerFragment
 
 class DisplayEventFragment : Fragment() {
 
