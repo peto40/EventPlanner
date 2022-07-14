@@ -2,41 +2,42 @@ package com.eventplanner.view.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.RadioButton
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.eventplanner.R
 import com.eventplanner.databinding.FragmentMainBinding
-import com.eventplanner.model.models.EventModel
-import com.eventplanner.utils.ViewModelProviderFactory
+import com.eventplanner.di.DaggerAppComponent
+import com.eventplanner.model.EventModel
 import com.eventplanner.view.adapters.EventRecyclerAdapter
 import com.eventplanner.viewmodel.SharedViewModel
-import javax.inject.Inject
 
 
-class MainFragment : Fragment() {
-
+class MainFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+    }
 
+    private val appComponent by lazy {
+        DaggerAppComponent.builder()
+            .application(requireActivity().application)
+            .context(requireContext())
+            .build()
+    }
+
+    private val mSharedViewModel by viewModels<SharedViewModel> {
+        appComponent.viewModelFactory()
     }
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var adapter: EventRecyclerAdapter
-
-//        private val mSharedViewModel: SharedViewModel by viewModels {
-//        ShareViewModelFactory(
-//            requireActivity().application,
-//            (requireActivity().application as MyApplication).repository)
-//    }
-    private lateinit var mSharedViewModel: SharedViewModel
-
-    @Inject
-    lateinit var providerFactory: ViewModelProviderFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,10 +45,6 @@ class MainFragment : Fragment() {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         adapter = EventRecyclerAdapter(context)
-
-       // mSharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
-
-
 
         binding.recyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -61,12 +58,61 @@ class MainFragment : Fragment() {
                 )
             }
 
-            override fun onSettingsClick(position: Int, items: MutableList<EventModel>) {
+            override fun onUpdateClick(position: Int, items: MutableList<EventModel>) {
                 findNavController().navigate(
                     MainFragmentDirections.actionMainFragmentToUpdateFragment(
                         items[position]
                     )
                 )
+            }
+
+            override fun onChooseStateClick(
+                position: Int,
+                items: MutableList<EventModel>,
+                view: RadioButton
+            ) {
+                val eventName = items[position].eventName
+                val eventDescription = items[position].description
+                val location = items[position].location
+                val date = items[position].date
+                val time = items[position].time
+                val weatherDescription = items[position].weatherDescription
+                val weatherIcon = items[position].icon
+
+                    when (view.id) {
+                        R.id.radio_visited -> {
+                            val updatedEvent = EventModel(
+                                date,
+                                time,
+                                weatherDescription,
+                                eventName,
+                                eventDescription,
+                                location,
+                                weatherIcon,
+                                state = true
+                            )
+                            updatedEvent.id = items[position].id
+                            mSharedViewModel.updateEvent(updatedEvent)
+                            Toast.makeText(requireContext(), "Event change to Visited", Toast.LENGTH_SHORT).show()
+                        }
+
+                        R.id.radio_missed -> {
+                            val updatedEvent = EventModel(
+                                date,
+                                time,
+                                weatherDescription,
+                                eventName,
+                                eventDescription,
+                                location,
+                                weatherIcon,
+                                state = false
+                            )
+                            updatedEvent.id = items[position].id
+                            mSharedViewModel.updateEvent(updatedEvent)
+                            Toast.makeText(requireContext(), "Event change to Missed", Toast.LENGTH_SHORT).show()
+
+                        }
+                }
             }
 
         })
@@ -75,8 +121,6 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViewModel()
-
 
         mSharedViewModel.allEventLiveData.observe(viewLifecycleOwner) { item ->
             adapter.setItems(item)
@@ -96,9 +140,5 @@ class MainFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun setupViewModel() {
-        mSharedViewModel = ViewModelProvider(this, providerFactory)[SharedViewModel::class.java]
     }
 }

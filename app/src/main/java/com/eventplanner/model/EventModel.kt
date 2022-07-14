@@ -1,4 +1,4 @@
-package com.eventplanner.model.models
+package com.eventplanner.model
 
 import android.os.Parcelable
 import androidx.room.Entity
@@ -12,7 +12,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 data class EventModel(
     val date: String,
     val time: String,
-    val weather: String,
+    val weatherDescription: String,
     val eventName: String,
     val description: String?,
     val location: String,

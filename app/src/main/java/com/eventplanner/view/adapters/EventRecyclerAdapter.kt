@@ -2,16 +2,15 @@ package com.eventplanner.view.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.eventplanner.R
-import com.eventplanner.model.models.EventModel
+import com.eventplanner.databinding.ItemRecyclerViewBinding
+import com.eventplanner.model.EventModel
 import com.squareup.picasso.Picasso
 
 
-class EventRecyclerAdapter(private val context: Context?) :
+class EventRecyclerAdapter(context: Context?) :
     RecyclerView.Adapter<EventRecyclerAdapter.MyViewHolder>() {
     private var items: MutableList<EventModel> = mutableListOf()
     private lateinit var onClickListener: OnClickListener
@@ -23,7 +22,9 @@ class EventRecyclerAdapter(private val context: Context?) :
 
     interface OnClickListener {
         fun onItemClick(position: Int, items: MutableList<EventModel>)
-        fun onSettingsClick(position: Int, items: MutableList<EventModel>)
+        fun onUpdateClick(position: Int, items: MutableList<EventModel>)
+        fun onChooseStateClick(position: Int, items: MutableList<EventModel>, view: RadioButton)
+
     }
 
     fun setOnClickListener(listener: OnClickListener) {
@@ -31,19 +32,26 @@ class EventRecyclerAdapter(private val context: Context?) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_recycler_view, parent, false)
-        return MyViewHolder(view, onClickListener, items)
+        return MyViewHolder(
+            onClickListener,
+            items,
+            ItemRecyclerViewBinding.inflate(LayoutInflater.from(parent.context),parent,false))
     }
-
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val itemModel = items[position]
         holder.dateTxt.text = itemModel.date
         holder.timeTxt.text = itemModel.time
-        holder.weatherTxt.text = itemModel.weather
+        holder.weatherTxt.text = itemModel.weatherDescription
         holder.eventNameTxt.text = itemModel.eventName
         holder.descriptionTxt.text = itemModel.description
         holder.locationTxt.text = itemModel.location
+        itemModel.state?.let {
+            if (itemModel.state) {
+                holder.state.text = "Visited"
+            } else holder.state.text = "Missed"
+        }
+
 
         Picasso.get()
             .load(itemModel.icon)
@@ -52,24 +60,37 @@ class EventRecyclerAdapter(private val context: Context?) :
 
     override fun getItemCount() = items.size
 
-    class MyViewHolder(view: View, clickListener: OnClickListener, items: MutableList<EventModel>) :
-        RecyclerView.ViewHolder(view) {
-        val dateTxt: TextView = view.findViewById(R.id.date_txt)
-        val timeTxt: TextView = view.findViewById(R.id.time_txt)
-        val weatherTxt: TextView = view.findViewById(R.id.weather_txt)
-        val eventNameTxt: TextView = view.findViewById(R.id.event_name_txt)
-        val descriptionTxt: TextView = view.findViewById(R.id.description_txt)
-        val locationTxt: TextView = view.findViewById(R.id.location_txt)
-        val icon: ImageView = view.findViewById(R.id.weather_icon)
+    class MyViewHolder(
+        clickListener: OnClickListener,
+        items: MutableList<EventModel>,
+        itemBinding: ItemRecyclerViewBinding
+    ) : RecyclerView.ViewHolder(itemBinding.root) {
+        val dateTxt: TextView = itemBinding.dateTxt
+        val timeTxt: TextView = itemBinding.timeTxt
+        val weatherTxt: TextView = itemBinding.weatherTxt
+        val eventNameTxt: TextView = itemBinding.eventNameTxt
+        val descriptionTxt: TextView = itemBinding.descriptionTxt
+        val locationTxt: TextView = itemBinding.locationTxt
+        val icon: ImageView = itemBinding.weatherIcon
+        val state: TextView = itemBinding.tvState
+        val visited: RadioButton = itemBinding.radioVisited
+        val missed: RadioButton = itemBinding.radioMissed
 
-        private val updateBtn: ImageButton = view.findViewById(R.id.setting_btn)
+        private val updateBtn: ImageButton = itemBinding.settingBtn
 
         init {
-            view.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 clickListener.onItemClick(adapterPosition, items)
             }
             updateBtn.setOnClickListener {
-                clickListener.onSettingsClick(adapterPosition, items)
+                clickListener.onUpdateClick(adapterPosition, items)
+            }
+            visited.setOnClickListener {
+                clickListener.onChooseStateClick(adapterPosition, items, visited)
+
+            }
+            missed.setOnClickListener {
+                clickListener.onChooseStateClick(adapterPosition, items, missed)
             }
 
         }

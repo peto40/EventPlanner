@@ -1,4 +1,4 @@
-package com.eventplanner.model.models
+package com.eventplanner.model
 
 data class Weather(
     val description: String,

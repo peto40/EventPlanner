@@ -1,6 +1,6 @@
 package com.eventplanner.di
 
-import com.eventplanner.model.models.WeatherModel
+import com.eventplanner.model.WeatherModel
 import com.eventplanner.utils.Constants
 import retrofit2.Call
 import retrofit2.http.GET

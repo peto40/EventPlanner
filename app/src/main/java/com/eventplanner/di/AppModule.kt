@@ -4,7 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import com.eventplanner.database.EventDao
 import com.eventplanner.database.EventDb
-import com.eventplanner.database.EventRepository
+import com.eventplanner.repositiry.EventRepository
+import com.eventplanner.utils.ViewModelProviderFactory
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -33,5 +34,6 @@ class AppModule {
     fun providesRepository(eventDao: EventDao): EventRepository {
         return EventRepository(eventDao)
     }
+
 
 }

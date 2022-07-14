@@ -1,4 +1,4 @@
-package com.eventplanner.model.models
+package com.eventplanner.model
 
 import com.google.gson.annotations.SerializedName
 

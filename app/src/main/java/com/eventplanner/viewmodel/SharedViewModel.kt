@@ -4,11 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.eventplanner.MyApplication
-import com.eventplanner.database.EventRepository
+import com.eventplanner.repositiry.EventRepository
 import com.eventplanner.di.RetrofitServiceInterface
-import com.eventplanner.model.models.EventModel
-import com.eventplanner.model.models.WeatherModel
+import com.eventplanner.model.EventModel
+import com.eventplanner.model.WeatherModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(
     application: Application,
     private val repository: EventRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _allEventLiveData by lazy { MutableLiveData<MutableList<EventModel>>() }
     val allEventLiveData get() = _allEventLiveData
@@ -29,37 +30,29 @@ class SharedViewModel @Inject constructor(
 
     @Inject
     lateinit var mService: RetrofitServiceInterface
-
-
     init {
         (application as MyApplication).getRetrofitComponent().inject(this)
 
         getEventListFromDB()
     }
-////        val eventDb = EventDb.getInstance(getApplication())
-////        eventDao = eventDb.eventDao()
-////        getEventListFromDB(eventDao)
-//    }
 
     fun addItemListToDB(event: EventModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            _allEventLiveData.value?.add(event)
+           // _allEventLiveData.value?.add(event)
             repository.addEventInDB(event)
-           // eventDao.addEvent(event)
+            _allEventLiveData.postValue(repository.getAllEventList())
         }
     }
 
     private fun getEventListFromDB() {
         viewModelScope.launch(Dispatchers.IO) {
-           // _allEventLiveData.postValue(eventDao.getAll())
             _allEventLiveData.postValue(repository.getAllEventList())
+            repository.getAllEventList()
         }
     }
 
     fun updateEvent(event: EventModel) {
         viewModelScope.launch(Dispatchers.IO) {
-//            eventDao.update(event)
-//            getEventListFromDB()
             repository.updateEvent(event)
             getEventListFromDB()
         }
@@ -67,7 +60,6 @@ class SharedViewModel @Inject constructor(
 
     fun deleteEventFromDB(event: EventModel) {
         viewModelScope.launch(Dispatchers.IO) {
-//            eventDao.delete(event)
             repository.deleteEvent(event)
             _allEventLiveData.value?.remove(event)
         }

@@ -2,7 +2,7 @@ package com.eventplanner.database
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import com.eventplanner.model.models.EventModel
+import com.eventplanner.model.EventModel
 @Dao
 interface EventDao {
 

@@ -24,7 +24,7 @@
             app:destination="@id/mainFragment" />
         <argument
             android:name="currentEvent"
-            app:argType="com.eventplanner.model.models.EventModel" />
+            app:argType="com.eventplanner.model.EventModel" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -51,6 +51,6 @@
             app:destination="@id/mainFragment" />
         <argument
             android:name="currentEvent"
-            app:argType="com.eventplanner.model.models.EventModel" />
+            app:argType="com.eventplanner.model.EventModel" />
     </fragment>
 </navigation>

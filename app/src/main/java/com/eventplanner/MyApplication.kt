@@ -14,14 +14,11 @@ class MyApplication : Application() {
         appComponent = DaggerAppComponent
             .builder()
             .application(this)
+            .context(this)
             .build()
-
     }
-
 
     fun getRetrofitComponent(): AppComponent {
         return appComponent
     }
-
-
 }
