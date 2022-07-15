@@ -12,7 +12,7 @@ interface RetrofitServiceInterface {
     @GET("data/2.5/weather?")
     fun getData(
         @Query("q") cityName: String,
-        @Query("appid") key: String = Constants.API_KEY
+        @Query("appid") key: String = Constants.API_KEY,
     ): Call<WeatherModel>
 
 }

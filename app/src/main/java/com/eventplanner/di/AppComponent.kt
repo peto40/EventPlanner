@@ -34,7 +34,7 @@ interface AppComponent {
         fun context(context: Context): Builder
 
     }
-
+    @Singleton
     fun viewModelFactory(): ViewModelProviderFactory
 
     fun inject(sharedViewModel: SharedViewModel)

@@ -12,16 +12,17 @@ import com.eventplanner.R
 import com.eventplanner.databinding.FragmentMainBinding
 import com.eventplanner.di.DaggerAppComponent
 import com.eventplanner.model.EventModel
+import com.eventplanner.view.activities.MainActivity
 import com.eventplanner.view.adapters.EventRecyclerAdapter
 import com.eventplanner.viewmodel.SharedViewModel
 
 
-class MainFragment: Fragment() {
+class MainFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var adapter: EventRecyclerAdapter
 
     private val appComponent by lazy {
         DaggerAppComponent.builder()
@@ -30,14 +31,14 @@ class MainFragment: Fragment() {
             .build()
     }
 
-    private val mSharedViewModel by viewModels<SharedViewModel> {
+    private val mSharedViewModel by viewModels<SharedViewModel>({ activity as MainActivity }) {
         appComponent.viewModelFactory()
     }
 
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var adapter: EventRecyclerAdapter
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,39 +80,47 @@ class MainFragment: Fragment() {
                 val weatherDescription = items[position].weatherDescription
                 val weatherIcon = items[position].icon
 
-                    when (view.id) {
-                        R.id.radio_visited -> {
-                            val updatedEvent = EventModel(
-                                date,
-                                time,
-                                weatherDescription,
-                                eventName,
-                                eventDescription,
-                                location,
-                                weatherIcon,
-                                state = true
-                            )
-                            updatedEvent.id = items[position].id
-                            mSharedViewModel.updateEvent(updatedEvent)
-                            Toast.makeText(requireContext(), "Event change to Visited", Toast.LENGTH_SHORT).show()
-                        }
+                when (view.id) {
+                    R.id.radio_visited -> {
+                        val updatedEvent = EventModel(
+                            date,
+                            time,
+                            weatherDescription,
+                            eventName,
+                            eventDescription,
+                            location,
+                            weatherIcon,
+                            state = true
+                        )
+                        updatedEvent.id = items[position].id
+                        mSharedViewModel.updateEvent(updatedEvent)
+                        Toast.makeText(
+                            requireContext(),
+                            "Event change to Visited",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
-                        R.id.radio_missed -> {
-                            val updatedEvent = EventModel(
-                                date,
-                                time,
-                                weatherDescription,
-                                eventName,
-                                eventDescription,
-                                location,
-                                weatherIcon,
-                                state = false
-                            )
-                            updatedEvent.id = items[position].id
-                            mSharedViewModel.updateEvent(updatedEvent)
-                            Toast.makeText(requireContext(), "Event change to Missed", Toast.LENGTH_SHORT).show()
+                    R.id.radio_missed -> {
+                        val updatedEvent = EventModel(
+                            date,
+                            time,
+                            weatherDescription,
+                            eventName,
+                            eventDescription,
+                            location,
+                            weatherIcon,
+                            state = false
+                        )
+                        updatedEvent.id = items[position].id
+                        mSharedViewModel.updateEvent(updatedEvent)
+                        Toast.makeText(
+                            requireContext(),
+                            "Event change to Missed",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                        }
+                    }
                 }
             }
 

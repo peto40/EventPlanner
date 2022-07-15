@@ -25,20 +25,6 @@ constructor(
     }
 }
 
-//class ViewModelProviderFactory (
-//    val application: Application,
-//    val repository: EventRepository
-//) : ViewModelProvider.Factory {
-//
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        @Suppress("UNCHECKED_CAST")
-//        return SharedViewModel(
-//            application,
-//            repository
-//        ) as T
-//
-//    }
-//}
 
 
 

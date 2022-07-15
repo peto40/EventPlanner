@@ -16,10 +16,10 @@ import androidx.navigation.fragment.findNavController
 import com.eventplanner.databinding.FragmentAddEventBinding
 import com.eventplanner.di.DaggerAppComponent
 import com.eventplanner.model.EventModel
+import com.eventplanner.view.activities.MainActivity
 import com.eventplanner.view.adapters.EventRecyclerAdapter
 import com.eventplanner.viewmodel.SharedViewModel
 import com.squareup.picasso.Picasso
-
 
 class AddEventFragment : Fragment(),
     DatePickerDialog.OnDateSetListener,
@@ -43,7 +43,7 @@ class AddEventFragment : Fragment(),
             .build()
     }
 
-    private val mSharedViewModel by viewModels<SharedViewModel> {
+    private val mSharedViewModel by viewModels<SharedViewModel> ({ activity as MainActivity }) {
         component.viewModelFactory()
     }
 
@@ -105,7 +105,6 @@ class AddEventFragment : Fragment(),
         binding.btnAddEvent.setOnClickListener {
             addEvent()
         }
-
         return binding.root
     }
 
@@ -123,7 +122,6 @@ class AddEventFragment : Fragment(),
                 binding.weatherClouds.text = "${data.visibility} m"
                 binding.weatherWind.text = "${data.wind.speed} m/h"
                 iconName = data.weather[0].icon
-
                 Picasso.get()
                     .load("https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png")
                     .into(binding.ivIcon)

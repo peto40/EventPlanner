@@ -13,7 +13,6 @@ class DisplayEventFragment : Fragment() {
 
     private val args by navArgs<DisplayEventFragmentArgs>()
 
-
     private var _binding: FragmentDisplayEventBinding? = null
     private val binding get() = _binding!!
 
@@ -29,10 +28,9 @@ class DisplayEventFragment : Fragment() {
         binding.displayDate.text = args.currentEvent.date
         binding.displayTime.text = args.currentEvent.time
         binding.weather.text = args.currentEvent.weatherDescription
+        binding.id.text = args.currentEvent.id.toString()
 
         Picasso.get().load(args.currentEvent.icon).into(binding.ivWeather)
-
-        binding.id.text = args.currentEvent.id.toString()
 
         return binding.root
     }

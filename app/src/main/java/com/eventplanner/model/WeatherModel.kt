@@ -1,14 +1,24 @@
 package com.eventplanner.model
 
 data class WeatherModel(
-    val base: String,
-    val cod: Int,
-    val dt: Int,
-    val id: Int,
+
     val main: Main,
-    val name: String,
-    val timezone: Int,
     val visibility: Int,
     val weather: List<Weather>,
     val wind: Wind
+)
+
+data class Wind(
+    val speed: Double
+)
+
+data class Weather(
+    val description: String,
+    val icon: String,
+    val main: String
+)
+
+data class Main(
+    val temp: Double
+
 )

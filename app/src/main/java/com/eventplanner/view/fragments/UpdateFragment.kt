@@ -17,6 +17,7 @@ import com.eventplanner.R
 import com.eventplanner.databinding.FragmentUpdateBinding
 import com.eventplanner.di.DaggerAppComponent
 import com.eventplanner.model.EventModel
+import com.eventplanner.view.activities.MainActivity
 import com.eventplanner.viewmodel.SharedViewModel
 import com.squareup.picasso.Picasso
 
@@ -35,10 +36,10 @@ class UpdateFragment : Fragment(),
     var savedhour = 0
     val calendar = Calendar.getInstance()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
+    private val args by navArgs<UpdateFragmentArgs>()
+
+    private var _binding: FragmentUpdateBinding? = null
+    private val binding get() = _binding!!
 
     private val appComponent by lazy {
         DaggerAppComponent.builder()
@@ -47,15 +48,14 @@ class UpdateFragment : Fragment(),
             .build()
     }
 
-    private val mSharedViewModel by viewModels<SharedViewModel> {
+    private val mSharedViewModel by viewModels<SharedViewModel> ({ activity as MainActivity }) {
         appComponent.viewModelFactory()
     }
 
-    private val args by navArgs<UpdateFragmentArgs>()
-
-    private var _binding: FragmentUpdateBinding? = null
-    private val binding get() = _binding!!
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -205,8 +205,6 @@ class UpdateFragment : Fragment(),
                 || (time == "")
                 || (weatherDescription == ""))
     }
-
-
 }
 
 
