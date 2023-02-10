@@ -39,4 +39,6 @@ interface AppComponent {
 
     fun inject(sharedViewModel: SharedViewModel)
 
+    fun getViewModel(): SharedViewModel
+
 }

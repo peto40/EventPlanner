@@ -3,11 +3,10 @@ package com.eventplanner.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
 import kotlinx.parcelize.IgnoredOnParcel
 
 
-@Parcelize
+@kotlinx.parcelize.Parcelize
 @Entity(tableName = "events")
 data class EventModel(
     val date: String,
@@ -17,7 +16,7 @@ data class EventModel(
     val description: String?,
     val location: String,
     val icon: String,
-    val state: Boolean? = null
+    var isPassed: Boolean = false
 ) : Parcelable {
 
     @IgnoredOnParcel

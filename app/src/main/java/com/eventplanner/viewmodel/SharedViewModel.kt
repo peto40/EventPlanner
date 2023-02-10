@@ -2,7 +2,10 @@ package com.eventplanner.viewmodel
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.eventplanner.MyApplication
@@ -28,7 +31,6 @@ class SharedViewModel @Inject constructor(
     private val _weatherLiveData by lazy { MutableLiveData<WeatherModel>() }
     val weatherLiveData get() = _weatherLiveData
 
-
     @Inject
     lateinit var mService: RetrofitServiceInterface
 
@@ -38,7 +40,7 @@ class SharedViewModel @Inject constructor(
         getEventListFromDB()
     }
 
-    fun addItemListToDB(event: EventModel) {
+    fun addEventToDB(event: EventModel) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addEventInDB(event)
         }
