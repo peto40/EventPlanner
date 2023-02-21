@@ -1,23 +1,39 @@
 package com.eventplanner.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
-import com.eventplanner.database.EventDao
-import com.eventplanner.database.EventDb
-import com.eventplanner.repositiry.EventRepository
-import com.eventplanner.utils.ViewModelProviderFactory
+import com.eventplanner.application.EventApp
+import com.eventplanner.database.local.EventDao
+import com.eventplanner.database.local.EventDb
+import com.eventplanner.database.remote.api.RetrofitService
+import com.eventplanner.utils.Constants
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@Module(includes = [RetrofitModule::class])
-class AppModule {
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
 
     @Singleton
     @Provides
-    fun providesAppDatabase(application: Application): EventDb {
+    fun providesApplication(
+        @ApplicationContext app: Context
+    ): EventApp {
+        return app as EventApp
+    }
+
+    @Singleton
+    @Provides
+    fun providesAppDatabase(app: Application): EventDb {
         return Room.databaseBuilder(
-            application,
+            app,
             EventDb::class.java,
             "event_database")
             .build()
@@ -31,9 +47,15 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun providesRepository(eventDao: EventDao): EventRepository {
-        return EventRepository(eventDao)
+    fun provideRetrofitService(retrofit: Retrofit): RetrofitService {
+        return retrofit.create(RetrofitService::class.java)
     }
-
-
+    @Singleton
+    @Provides
+    fun provideRetrofitInstance(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 }

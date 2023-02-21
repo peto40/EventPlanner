@@ -33,6 +33,9 @@
     <string name="delete_event">Delete Event</string>
     <string name="status">Status:</string>
     <string name="is_expecet">Is Expect</string>
+    <string name="is_expect">Expect</string>
+    <string name="selected">Expect</string>
+    <string name="is_missed">Missed</string>
 
 
 </resources>

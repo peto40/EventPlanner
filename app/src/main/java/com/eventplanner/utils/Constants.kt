@@ -1,26 +1,23 @@
 package com.eventplanner.utils
 
-import com.eventplanner.model.EventModel
-
 object Constants {
 
+    // API keys
     const val BASE_URL = "https://api.openweathermap.org/"
-
     const val API_KEY = "2e17da4388b74b5859e5c70b967139ee"
-    
+
+    // Event keys
+    const val DISPLAY_EVENT_KEY = "display_event_key"
+    const val CURRENT_EVENT_KEY = "current_event_key"
+    const val UPDATE_EVENT_KEY = "current_event_key"
+
+
 }
 
-sealed class NavDestination(val destination: String) {
+sealed class NavDestination(val route: String) {
     object MainScreen: NavDestination("main")
-    object AddUpdateEventScreen: NavDestination("add_update_event")
+    object AddEventScreen: NavDestination("add_event")
     object UpdateEventScreen : NavDestination("update_event")
     object DisplayEventDetails : NavDestination("event_details")
 }
 
-val defList = listOf(
-    EventModel("", "", "", "", "", "", ""),
-)
-object Status {
-    const val isExpect = "is_expect"
-    const val missed = "missed"
-}
