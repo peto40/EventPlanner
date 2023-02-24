@@ -3,13 +3,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="visited_event">Visited</string>
     <string name="missed_event">Missed</string>
-    <string name="the_weather_at_that_time">Weather description:</string>
+    <string name="the_weather_at_that_time">Weather:</string>
     <string name="add_event">Add Event</string>
     <string name="lbl_event_name">Event Name</string>
     <string name="lbl_description">Description</string>
     <string name="lbl_location">Location</string>
-    <string name="lbl_date">01/07/2022</string>
-    <string name="tv_time">01:00:00</string>
+    <string name="default_date">01/07/2022</string>
+    <string name="default_time">01:00:00</string>
     <string name="lbl_time">Time</string>
     <string name="lbl_add_event">Add Event</string>
     <string name="date">Set Date</string>
@@ -19,6 +19,7 @@
     <string name="location">Location:</string>
     <string name="dates">Date:</string>
     <string name="time_display">Time:</string>
+    <string name="received_weather">Weather</string>
     <string name="weather">Weather at that time:</string>
     <string name="settings">Settings</string>
     <string name="delete">Delete</string>
@@ -30,7 +31,11 @@
     <string name="update">Update</string>
     <string name="update_event">Update Event</string>
     <string name="delete_event">Delete Event</string>
-    <string name="state">State:</string>
+    <string name="status">Status:</string>
+    <string name="is_expecet">Is Expect</string>
+    <string name="is_expect">Expect</string>
+    <string name="selected">Expect</string>
+    <string name="is_missed">Missed</string>
 
 
 </resources>
